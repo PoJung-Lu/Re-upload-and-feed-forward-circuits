@@ -11,7 +11,6 @@ import optax
 def model_noise(backend,fake_backend):
     from qiskit_aer.noise import  NoiseModel
     if fake_backend:   #deprecated
-        
         # model_dict = {}
         # i_bknd = backend.index('_')+1
         # f_bknd = 'Fake'+backend[i_bknd].upper()+backend[i_bknd+1:]+'V2'
@@ -29,7 +28,7 @@ def model_noise(backend,fake_backend):
 def device(num_qubits,noise=False,real_device=False,backend_name=None):#noise_model=None
     if noise:
         from qiskit_ibm_runtime import QiskitRuntimeService
-        # QiskitRuntimeService.save_account(channel='ibm_quantum', instance='ibm-q-hub-ntu/ntu-internal/default', token='4d97e16a9a8330f2bfc4273f7b58a1b55275ba0540747cae57d19eaf7d3e8b811f80aed7c59bc03aad2087f8eaf7f4e5e6adcf6fa4c333c2369c26b62efd4bcd', overwrite=True)
+        # QiskitRuntimeService.save_account(channel='ibm_quantum', instance='ibm-q-hub-ntu/ntu-internal/default', token='', overwrite=True)
         service = QiskitRuntimeService()
         '''If backend_name is None, use least_busy backend instead.'''
         if backend_name:
