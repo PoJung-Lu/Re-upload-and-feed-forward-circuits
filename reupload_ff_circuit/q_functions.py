@@ -82,6 +82,5 @@ def predefined_states_dm(shape,num_qubits,display=True):
         plot_class_states(dm_labels,theta, phi, bloch3d=False)  
     Yc = yc(c_states,num_class_1q,shape,num_qubits)
     dm_labels = totuple(dm_labels)
-    
     return c_states,dm_labels, Yc
 

@@ -113,7 +113,7 @@ def initialize_data(problem,n_training=None,n_test=None,seed_num=0,enc_dim=3,**k
         else:
             return X_test, y_test
 # enc_dim,num_qubits,num_layers,num_reupload,num_rot
-def initialize_params(enc_dim, n_qubits, n_feedforward, n_reupload, n_rot, num_class, seed_num=40):
+def initialize_params(enc_dim, n_qubits, n_feedforward, n_reupload, n_rot, num_class, seed_num=40): #num_class= number of class to be classified for one qibit
     num_layers = n_feedforward
     key = jax.random.PRNGKey(seed_num)
     key_s, key_c, key_l = jax.random.split(key,3)

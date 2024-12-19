@@ -62,9 +62,11 @@ def conditional_qnode(f):
 
 class qcircuit:
     # dev = device(num_qubits,noise,real_device,backend,noise_model)
-    def __init__(self, *setting, **kwargs): #params, x, y,
+    def __init__(self, *setting, noise=None, real_device=None, backend_name=None, rot='xzx', **kwargs): #params, x, y,
         enc_dim,n_qubits,n_layers,n_reupload,n_rot = setting
-        self.dev = device(n_qubits,kwargs['noise'],kwargs['real_device'],kwargs['backend_name'])#,noise_model
+        
+        
+        self.dev = device(n_qubits,noise,real_device,backend_name)#,noise_model
         # self.x = x
         # self.y = y
         self.enc_dim = enc_dim
@@ -72,8 +74,8 @@ class qcircuit:
         self.n_layers = n_layers
         self.n_reupload = n_reupload
         self.n_rot = n_rot
-        self.noise = kwargs['noise']
-        self.rot = kwargs['rot']
+        self.noise = noise #kwargs['noise']
+        self.rot = rot #kwargs['rot']
         # self.N = len(x[0])                                 # # of examples, and x = X_train.T
         # self.params = params   
 
@@ -229,7 +231,6 @@ class qcircuit:
         # x = self.reshape_input(self.x)
         # params, y = self.params, self.y
         x = self.reshape_input(x)
-        params = p
         n_layers = self.n_layers
         rot = self.rot
         
