@@ -48,7 +48,7 @@ To ensure compatibility and avoid dependency conflicts, it is recommended to use
 
 This section introduces how to use the hybrid QNN circuit functions provided in this repository. The schematic structure of the hybrid QNN is shown below:
 
-![Schematic diagram of Hybrid QNN](https://github.com/PoJung-Lu/Re-upload-and-feed-forward-circuits/tree/main/Figures/Hybrid_QNN.jpg)
+![Schematic diagram of Hybrid QNN](https://github.com/PoJung-Lu/Re-upload-and-feed-forward-circuits/blob/main/Figures/Hybrid_QNN.jpg)
 
 ### Overview of Hybrid QNN Structure
 The hybrid QNN structure is defined by five key parameters:
