@@ -41,8 +41,7 @@ def device(num_qubits,noise=False,real_device=False,backend_name=None):#noise_mo
         
         if real_device:
             # dev = qml.device('qiskit.remote', wires=<num_qubits>, backend=backend)
-            dev = qml.device('qiskit.remote', wires=num_qubits, backend=backend, 
-                             provider=provider,initial_layout= [1,2],start_session=True)#)#
+            dev = qml.device('qiskit.remote', wires=num_qubits, backend=backend,)#initial_layout=[1,2], start_session=True)
         else:
             noise_model = model_noise(backend,fake_backend=False) 
             dev = qml.device('qiskit.aer', wires=num_qubits, diff_method="adjoint", noise_model=noise_model)#

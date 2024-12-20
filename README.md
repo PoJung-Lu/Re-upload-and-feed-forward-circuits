@@ -48,7 +48,7 @@ To ensure compatibility and avoid dependency conflicts, it is recommended to use
 
 This section introduces how to use the hybrid QNN circuit functions provided in this repository. The schematic structure of the hybrid QNN is shown below:
 
-![Schematic diagram of Hybrid QNN](https://github.com/PoJung-Lu/Re-upload-and-feed-forward-circuits/tree/main/Figures/Hybrid_QNN.jpg?raw=true)
+![Schematic diagram of Hybrid QNN](https://github.com/PoJung-Lu/Re-upload-and-feed-forward-circuits/tree/main/Figures/Hybrid_QNN.jpg)
 
 ### Overview of Hybrid QNN Structure
 The hybrid QNN structure is defined by five key parameters:
@@ -85,6 +85,9 @@ To calculate the measurement output of the input data for a given circuit struct
 
 Step 1: Assign the Circuit Structure
 ```
+from reupload_ff_circuit.q_functions import *
+from reupload_ff_circuit.q_circuits import *
+
 setting = n_enc, n_q ,n_f, n_r, n_v = 5, 2 , 2, 3, 2 # 
 qc = qcircuit(*setting)
 ``` 
