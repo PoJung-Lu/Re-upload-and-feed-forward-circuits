@@ -1,9 +1,3 @@
----
-Title: Feed-forward and Re-upload Circuits 
-Authors:
-  - Po-Jung Lu
----
-
 # Hybrid QNN Circuit: Measurement Feed-Forward and Data Re-Upload Structures
 
 This repository contains the implementation code for the thesis "Quantum Classifiers Using Measurement Feed-forward Quantum Neural Network" [doi:10.6342/NTU202404165](https://drive.google.com/file/d/1yV0NOxuzr9Q0HYPzrn0tAS_NhO4z8QIa/view?usp=drive_link). For detailed information about the methodology and results, please refer to the thesis document. 
