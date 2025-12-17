@@ -114,13 +114,43 @@ def initialize_data(problem,n_training=None,n_test=None,seed_num=0,enc_dim=3,**k
             return X_test, y_test
 # enc_dim,num_qubits,num_layers,num_reupload,num_rot
 def initialize_params(enc_dim, n_qubits, n_feedforward, n_reupload, n_rot, num_class, seed_num=40): #num_class= number of class to be classified for one qibit
+    """
+    Initialize parameters with variance scaling for better convergence.
+
+    Uses scaled initialization similar to Xavier/He initialization to avoid
+    vanishing/exploding gradients in quantum circuits. The scaling is based
+    on the fan-in (number of inputs) to each parameter group.
+
+    Args:
+        enc_dim: Number of encoding rotation gates
+        n_qubits: Number of qubits
+        n_feedforward: Number of feed-forward layers
+        n_reupload: Number of re-upload repetitions
+        n_rot: Number of variational rotations
+        num_class: Number of classes for classification
+        seed_num: Random seed for reproducibility
+
+    Returns:
+        Dictionary with keys 'scaling', 'circ', 'loss' containing parameter arrays
+    """
     num_layers = n_feedforward
     key = jax.random.PRNGKey(seed_num)
-    key_s, key_c, key_l = jax.random.split(key,3)
-    p_s = jax.random.uniform(key_s,(n_feedforward, n_reupload, n_qubits, enc_dim),dtype=jnp.float64) #12*params,2*scaling factor  
-    p_c = jax.random.uniform(key_c,(n_feedforward, n_reupload, n_qubits, n_rot, 3),dtype=jnp.float64)
-    p_l = jax.random.uniform(key_l,(n_qubits, num_class),dtype=jnp.float64)
-    p = {'scaling':p_s, 'circ':p_c,'loss':p_l}
+    key_s, key_c, key_l = jax.random.split(key, 3)
+
+    # Variance scaling for better convergence
+    # Scale by sqrt(2 / fan_in) similar to He initialization
+    scale_s = jnp.sqrt(2.0 / (n_qubits * enc_dim))
+    scale_c = jnp.sqrt(2.0 / (n_qubits * n_rot * 3))
+
+    # Use normal distribution with scaling for circuit parameters
+    # This provides better gradient flow than uniform initialization
+    p_s = jax.random.normal(key_s, (n_feedforward, n_reupload, n_qubits, enc_dim), dtype=jnp.float64) * scale_s
+    p_c = jax.random.normal(key_c, (n_feedforward, n_reupload, n_qubits, n_rot, 3), dtype=jnp.float64) * scale_c
+
+    # Keep uniform for loss params (they act as weights/coefficients)
+    p_l = jax.random.uniform(key_l, (n_qubits, num_class), dtype=jnp.float64)
+
+    p = {'scaling': p_s, 'circ': p_c, 'loss': p_l}
     return p
 
 def plot_loss_history(l_h, val_l_h=[], setting=None, fig_name=''):
