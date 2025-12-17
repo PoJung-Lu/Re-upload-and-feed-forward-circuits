@@ -353,20 +353,50 @@ class qcircuit:
         return jnp.concatenate(results, axis=-1)
     
 def test(params, x, y, *args, **kwargs):
+    """
+    Test/training function with support for memory-efficient chunked processing.
 
+    Args:
+        params: Circuit parameters dictionary
+        x: Input data array
+        y: Target labels
+        *args: (enc_dim, num_qubits, num_layers, num_reupload, num_rot)
+        **kwargs: Additional options including:
+            - noise: Use noisy simulator (bool)
+            - use_chunked: Use memory-efficient chunked processing (bool, default: False)
+            - chunk_size: Samples per chunk when use_chunked=True (int, default: 32)
+            - qc: qcircuit instance
+            - dm_labels: Density matrix labels
+            - num_class_1q: Number of classes per qubit
+            - shape: "bitwise" or other
+            - Yc: Target matrix
+
+    Returns:
+        (predictions, loss, gradients)
+
+    Example:
+        # For large datasets, enable chunked processing
+        pred, loss, grad = test(params, X, y, *settings, use_chunked=True, chunk_size=16, **kwargs)
+    """
     enc_dim,num_qubits,num_layers,num_reupload,num_rot = args     
     
     # for k, v in kwargs.items():
     #     if 'noise' in k:
     #         noise = v
     
-    def fidel_function(params, x_i,dm_label, *setting, **kwargs):  
+    def fidel_function(params, x_i,dm_label, *setting, **kwargs):
         qc = kwargs['qc']
+        use_chunked = kwargs.get('use_chunked', False)
+        chunk_size = kwargs.get('chunk_size', 32)
+
         if kwargs['noise']:
             return qc.qc_nq(params, x_i, dm_label,)
+        elif use_chunked:
+            # Use memory-efficient chunked version for large datasets
+            return qc.jqc_nq_chunked(params, x_i, dm_label, chunk_size=chunk_size)
         else:
-            # print('circuit is jitted')
-            return qc.jqc_nq(params, x_i, dm_label,)  # qc.jqc_nq()
+            # Use standard JIT-compiled version
+            return qc.jqc_nq(params, x_i, dm_label,)
         
     def jloss(params,fidelities,y_i,shape,num_class,Yc):
         """
