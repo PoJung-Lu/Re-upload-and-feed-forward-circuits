@@ -347,6 +347,8 @@ class qcircuit:
             chunk_end = min(i + chunk_size, n_samples)
             chunk_x = x[..., i:chunk_end]
             chunk_result = self.jqc_nq(params, chunk_x, y)
+            # Ensure result is a JAX array
+            chunk_result = jnp.array(chunk_result)
             results.append(chunk_result)
 
         # Concatenate results along the sample dimension
