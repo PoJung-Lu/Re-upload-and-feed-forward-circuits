@@ -12,7 +12,8 @@ import numpy as np
 import jax.numpy as jnp
 from reupload_ff_circuit.q_circuits import qcircuit
 from reupload_ff_circuit.util import initialize_params, initialize_data
-from reupload_ff_circuit.q_functions import dm_generation
+
+from reupload_ff_circuit.q_functions import predefined_states_dm  # dm_generation
 
 print("=" * 70)
 print("Testing jqc_nq_chunked() Implementation")
@@ -26,8 +27,11 @@ qc = qcircuit(enc_dim, n_qubits, n_layers, n_reupload, n_rot)
 params = initialize_params(enc_dim, n_qubits, n_layers, n_reupload, n_rot, num_class)
 
 # Generate test data
-X_train, y_train = initialize_data('squares', n_training=100, preprocess='scaling')
-dm_labels = dm_generation('zyz', num_class)
+X_train, y_train = initialize_data("squares", n_training=100, preprocess="scaling")
+dm_labels = predefined_states_dm("tetrahedron", n_qubits, display=True)[
+    1
+]  # dm_generation('zyz', num_class)
+
 
 print(f"\nTest Setup:")
 print(f"  Circuit: enc_dim={enc_dim}, n_qubits={n_qubits}, n_layers={n_layers}")
@@ -44,10 +48,14 @@ try:
     result_standard = qc.jqc_nq(params, X_train.T, dm_labels[0])
     print(f"✓ Standard jqc_nq output shape: {result_standard.shape}")
 
-    result_chunked_32 = qc.jqc_nq_chunked(params, X_train.T, dm_labels[0], chunk_size=32)
+    result_chunked_32 = qc.jqc_nq_chunked(
+        params, X_train.T, dm_labels[0], chunk_size=32
+    )
     print(f"✓ Chunked (size=32) output shape: {result_chunked_32.shape}")
 
-    result_chunked_16 = qc.jqc_nq_chunked(params, X_train.T, dm_labels[0], chunk_size=16)
+    result_chunked_16 = qc.jqc_nq_chunked(
+        params, X_train.T, dm_labels[0], chunk_size=16
+    )
     print(f"✓ Chunked (size=16) output shape: {result_chunked_16.shape}")
 
     if result_standard.shape == result_chunked_32.shape == result_chunked_16.shape:
@@ -103,11 +111,15 @@ print("=" * 70)
 # Test 3a: Small dataset (smaller than chunk_size)
 print("\nTest 3a: Small dataset (20 samples, chunk_size=32)")
 try:
-    X_small, y_small = initialize_data('squares', n_training=20, preprocess='scaling')
+    X_small, y_small = initialize_data("squares", n_training=20, preprocess="scaling")
     result_small_std = qc.jqc_nq(params, X_small.T, dm_labels[0])
-    result_small_chunk = qc.jqc_nq_chunked(params, X_small.T, dm_labels[0], chunk_size=32)
+    result_small_chunk = qc.jqc_nq_chunked(
+        params, X_small.T, dm_labels[0], chunk_size=32
+    )
 
-    match_small = np.allclose(result_small_std, result_small_chunk, rtol=1e-5, atol=1e-8)
+    match_small = np.allclose(
+        result_small_std, result_small_chunk, rtol=1e-5, atol=1e-8
+    )
     print(f"  Standard shape: {result_small_std.shape}")
     print(f"  Chunked shape: {result_small_chunk.shape}")
     print(f"  Results match: {match_small}")
@@ -123,11 +135,15 @@ except Exception as e:
 # Test 3b: Dataset with exact chunk boundary
 print("\nTest 3b: Exact chunk boundary (64 samples, chunk_size=32)")
 try:
-    X_exact, y_exact = initialize_data('squares', n_training=64, preprocess='scaling')
+    X_exact, y_exact = initialize_data("squares", n_training=64, preprocess="scaling")
     result_exact_std = qc.jqc_nq(params, X_exact.T, dm_labels[0])
-    result_exact_chunk = qc.jqc_nq_chunked(params, X_exact.T, dm_labels[0], chunk_size=32)
+    result_exact_chunk = qc.jqc_nq_chunked(
+        params, X_exact.T, dm_labels[0], chunk_size=32
+    )
 
-    match_exact = np.allclose(result_exact_std, result_exact_chunk, rtol=1e-5, atol=1e-8)
+    match_exact = np.allclose(
+        result_exact_std, result_exact_chunk, rtol=1e-5, atol=1e-8
+    )
     print(f"  Standard shape: {result_exact_std.shape}")
     print(f"  Chunked shape: {result_exact_chunk.shape}")
     print(f"  Results match: {match_exact}")
@@ -143,11 +159,17 @@ except Exception as e:
 # Test 3c: Non-exact chunk boundary
 print("\nTest 3c: Non-exact chunk boundary (75 samples, chunk_size=32)")
 try:
-    X_nonexact, y_nonexact = initialize_data('squares', n_training=75, preprocess='scaling')
+    X_nonexact, y_nonexact = initialize_data(
+        "squares", n_training=75, preprocess="scaling"
+    )
     result_nonexact_std = qc.jqc_nq(params, X_nonexact.T, dm_labels[0])
-    result_nonexact_chunk = qc.jqc_nq_chunked(params, X_nonexact.T, dm_labels[0], chunk_size=32)
+    result_nonexact_chunk = qc.jqc_nq_chunked(
+        params, X_nonexact.T, dm_labels[0], chunk_size=32
+    )
 
-    match_nonexact = np.allclose(result_nonexact_std, result_nonexact_chunk, rtol=1e-5, atol=1e-8)
+    match_nonexact = np.allclose(
+        result_nonexact_std, result_nonexact_chunk, rtol=1e-5, atol=1e-8
+    )
     print(f"  Standard shape: {result_nonexact_std.shape}")
     print(f"  Chunked shape: {result_nonexact_chunk.shape}")
     print(f"  Results match: {match_nonexact}")
@@ -167,7 +189,7 @@ print("TEST 4: Different Chunk Sizes")
 print("=" * 70)
 
 try:
-    X_test, y_test = initialize_data('squares', n_training=100, preprocess='scaling')
+    X_test, y_test = initialize_data("squares", n_training=100, preprocess="scaling")
     result_std = qc.jqc_nq(params, X_test.T, dm_labels[0])
 
     chunk_sizes = [8, 16, 25, 32, 50]
@@ -175,12 +197,16 @@ try:
 
     print(f"\nTesting various chunk sizes with {len(y_test)} samples:")
     for chunk_size in chunk_sizes:
-        result_chunk = qc.jqc_nq_chunked(params, X_test.T, dm_labels[0], chunk_size=chunk_size)
+        result_chunk = qc.jqc_nq_chunked(
+            params, X_test.T, dm_labels[0], chunk_size=chunk_size
+        )
         match = np.allclose(result_std, result_chunk, rtol=1e-5, atol=1e-8)
         max_diff = jnp.max(jnp.abs(result_std - result_chunk))
         expected_chunks = int(np.ceil(len(y_test) / chunk_size))
 
-        print(f"  chunk_size={chunk_size:2d}: match={match}, max_diff={max_diff:.2e}, chunks={expected_chunks}")
+        print(
+            f"  chunk_size={chunk_size:2d}: match={match}, max_diff={max_diff:.2e}, chunks={expected_chunks}"
+        )
         all_match = all_match and match
 
     if all_match:
@@ -199,7 +225,7 @@ print("=" * 70)
 print("\nVerifying data flow through jqc_nq_chunked:")
 try:
     # Test with small dataset for debugging
-    X_debug, y_debug = initialize_data('squares', n_training=10, preprocess='scaling')
+    X_debug, y_debug = initialize_data("squares", n_training=10, preprocess="scaling")
 
     print(f"  Input X shape: {X_debug.shape}")
     print(f"  Transposed X shape: {X_debug.T.shape}")
@@ -213,7 +239,9 @@ try:
     print(f"  Standard output shape: {result_debug_std.shape}")
 
     # Run through chunked method
-    result_debug_chunk = qc.jqc_nq_chunked(params, X_debug.T, dm_labels[0], chunk_size=5)
+    result_debug_chunk = qc.jqc_nq_chunked(
+        params, X_debug.T, dm_labels[0], chunk_size=5
+    )
     print(f"  Chunked output shape: {result_debug_chunk.shape}")
 
     # Verify element-wise
@@ -230,13 +258,15 @@ try:
 except Exception as e:
     print(f"\n✗ FAIL: Exception occurred: {e}")
     import traceback
+
     traceback.print_exc()
 
 # Final Summary
 print("\n" + "=" * 70)
 print("SUMMARY")
 print("=" * 70)
-print("""
+print(
+    """
 The jqc_nq_chunked() implementation:
 
 ✓ Correctly splits input data along the sample dimension (last axis)
@@ -251,4 +281,5 @@ Usage recommendations:
 - Medium datasets (100-500): chunk_size=32 (default)
 - Large datasets (> 500): chunk_size=16 or smaller
 - Very large datasets: chunk_size=8 for maximum memory efficiency
-""")
+"""
+)

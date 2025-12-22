@@ -24,7 +24,6 @@ def model_noise(backend,fake_backend):
         logger.warning('Fake backend deprecated, falling back to NoiseModel from physical backend.')
         noise_model = NoiseModel.from_backend(backend) 
     else:
-
         noise_model = NoiseModel.from_backend(backend) 
     return noise_model
 
@@ -388,7 +387,7 @@ def test(params, x, y, *args, **kwargs):
     
     def fidel_function(params, x_i,dm_label, *setting, **kwargs):
         qc = kwargs['qc']
-        use_chunked = kwargs.get('use_chunked', False)
+        use_chunked = kwargs.get('use_chunked', True)
         chunk_size = kwargs.get('chunk_size', 32)
 
         if kwargs['noise']:
