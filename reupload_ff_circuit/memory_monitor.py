@@ -31,7 +31,7 @@ class MemoryMonitor:
         self.initial_memory = None
         self.peak_memory = 0
         self.measurements = []
-
+        
     def get_memory_mb(self) -> float:
         """Get current memory usage in MB."""
         return self.process.memory_info().rss / 1024 / 1024
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     # Example 1: Using context manager style
-    monitor = MemoryMonitor(threshold_mb=50.0)
+    monitor = MemoryMonitor(threshold_mb=1000.0)
     monitor.start()
 
     # Simulate some work
