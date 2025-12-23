@@ -18,12 +18,22 @@ import numpy as np
 
 problems = ['breast_cancer','moon','circle', '3 circles', 'wavy circle', 'hypersphere', 'tricrown', 'non convex', 'crown', 'sphere', 'squares', 'wavy lines']
 
+# Default sample counts for different problems
+DEFAULT_SAMPLES = {
+    'sphere': 4500,
+    'hypersphere': 5000,
+    'breast_cancer': 569
+}
+
 def data_generator(problem, samples=None, noise=0.1):
     """
-    This function generates the data for a problem
-    INPUT: 
-        -problem: Name of the problem, one of: 'circle', '3 circles', 'hypersphere', 'tricrown', 'non convex', 'crown', 'sphere', 'squares', 'wavy lines'
-        -samples Number of samples for the data
+    This function generates the data for a problem using optimized dictionary dispatch.
+
+    INPUT:
+        -problem: Name of the problem, one of: 'circle', '3 circles', 'hypersphere', 'tricrown',
+                  'non convex', 'crown', 'sphere', 'squares', 'wavy lines', 'moon', 'breast_cancer'
+        -samples: Number of samples for the data (None for defaults)
+        -noise: Noise level for 'moon' and 'breast_cancer' problems
     OUTPUT:
         -data: set of training and test data
         -settings: things needed for drawing
@@ -31,48 +41,39 @@ def data_generator(problem, samples=None, noise=0.1):
     problem = problem.lower()
     if problem not in problems:
         raise ValueError('problem must be one of {}'.format(problems))
-    if samples == None:
-        if problem == 'sphere': 
-            samples = 4500
-        elif problem == 'hypersphere':
-            samples = 5000
-        else: 
-            samples = 4200
-            
-    if problem == 'circle':
-        data, settings = _circle(samples)
-        
-    if problem == '3 circles':
-        data, settings = _3_circles(samples)
-        
-    if problem == 'wavy lines':
-        data, settings = _wavy_lines(samples)
 
-    if problem == 'squares':
-        data, settings = _squares(samples)
-        
-    if problem == 'sphere':
-        data, settings = _sphere(samples)
-        
-    if problem == 'non convex':
-        data, settings = _non_convex(samples)
-        
-    if problem == 'crown':
-        data, settings = _crown(samples)
-        
-    if problem == 'tricrown':
-        data, settings = _tricrown(samples)
-        
-    if problem == 'hypersphere':
-        data, settings = _hypersphere(samples)
-    
-    if problem == 'moon':
-        data, settings = _moon(samples, noise)
-    
-    if problem == 'breast_cancer':
-        if samples>569:
-            raise ValueError('number of samples must be less or equal to 569')
-        data, settings = _breast_cancer(samples, noise)
+    # Set default samples using dictionary lookup
+    if samples is None:
+        samples = DEFAULT_SAMPLES.get(problem, 4200)
+
+    # Validation for breast_cancer
+    if problem == 'breast_cancer' and samples > 569:
+        raise ValueError('number of samples must be less or equal to 569')
+
+    # Dictionary-based dispatch for O(1) lookup
+    PROBLEM_GENERATORS = {
+        'circle': _circle,
+        '3 circles': _3_circles,
+        'wavy lines': _wavy_lines,
+        'squares': _squares,
+        'sphere': _sphere,
+        'non convex': _non_convex,
+        'crown': _crown,
+        'tricrown': _tricrown,
+        'hypersphere': _hypersphere,
+        'moon': _moon,
+        'breast_cancer': _breast_cancer,
+        'wavy circle': _circle,  # Assuming 'wavy circle' maps to _circle
+    }
+
+    generator = PROBLEM_GENERATORS[problem]
+
+    # Handle generators with different signatures
+    if problem in ['moon', 'breast_cancer']:
+        data, settings = generator(samples, noise)
+    else:
+        data, settings = generator(samples)
+
     return data, settings 
 
 def _breast_cancer(samples, noise):

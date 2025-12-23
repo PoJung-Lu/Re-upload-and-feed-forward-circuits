@@ -153,7 +153,7 @@ dependencies:
     - osqp==0.6.7.post3
     - patch-ng==1.18.1
     - pbr==6.1.0
-    - pennylane==0.40.0.dev23
+    - ==0.40.0.dev23pennylane
     - pennylane-lightning==0.39.0
     - pennylane-qiskit==0.39.0
     - pillow==11.0.0
