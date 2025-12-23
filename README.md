@@ -2,21 +2,6 @@
 
 This repository contains the implementation code for the thesis "Quantum Classifiers Using Measurement Feed-forward Quantum Neural Network" [doi:10.6342/NTU202404165](https://drive.google.com/file/d/1yV0NOxuzr9Q0HYPzrn0tAS_NhO4z8QIa/view?usp=drive_link). For detailed information about the methodology and results, please refer to the thesis document.
 
-## ⚡ New: Performance Optimizations (Branch: `optimizations/performance-improvements`)
-
-**Major performance and memory improvements:**
-- **30-50% faster training** with vectorized operations and cached vmaps
-- **50-80% memory reduction** with chunked processing
-- **Memory leak fixes** with automatic cleanup and functional programming style
-- **Memory tracking** for monitoring peak usage
-
-**Key Features:**
-- `jqc_nq_chunked()` - Memory-efficient processing for large datasets
-- `MemoryTracker` - Real-time memory monitoring
-- `Demo_script_optimized.ipynb` - Functional programming with memory management
-- Comprehensive verification suite and documentation
-
-See [VERIFICATION_REPORT.md](VERIFICATION_REPORT.md) for details.
 
 ## Purpose
 
@@ -44,15 +29,16 @@ This repository is not yet packaged as an official Python package. To use the fr
 
 ### Requirements
 
-This repository is developed under Python 3.13.0 and depends on the following key libraries:
+This repository is developed under Python 3.13.11 and depends on the following key libraries:
 
-- PennyLane: [0.40.0.dev23](https://github.com/PennyLaneAI/pennylane.git)
-- PennyLane-qiskit: 0.39.0
-- JAX: 0.4.35
+- PennyLane: 0.43.1 (https://github.com/PennyLaneAI/pennylane.git)
+- jax~=0.6.0 
+- jaxlib~=0.6.0
 
 To ensure compatibility and avoid dependency conflicts, it is recommended to use Anaconda to create a virtual environment:
 
-`conda env create --file test_env.yaml`
+`conda create -n env python=3.13.11
+conda activate env install -r requirements.txt`
 
 ## Getting Started
 
@@ -134,10 +120,19 @@ results = qc.jqc_nq(params, x_data.T, dm_labels[0])
    - qc_nq(): The standard function to calculate results.
    - jqc_nq(): An optimized version accelerated by jax.jit compilation for faster execution.
 
-### ⚠️ Memory Considerations
+### ⚡ Memory Optimizations & Considerations
 
-- The jqc_nq() function is memory-intensive, particularly for large datasets or circuits.
-- While memory usage optimization is planned, this is currently a side project. Updates will be made only as time permits, or if sponsorship is provided to accelerate the process. Contributions are welcome!
+**Optimized Functions Available** (Branch: `optimizations/performance-improvements`):
+
+- **`jqc_nq()`**: JIT-compiled version for 30-50% faster training
+- **`jqc_nq_chunked()`**: Memory-efficient processing achieving 50-80% memory reduction for large datasets
+- **`MemoryTracker`**: Real-time memory monitoring to track peak usage during training
+
+**Important Notes**:
+- Standard `jqc_nq()` is memory-intensive for large datasets or circuits
+- Use `jqc_nq_chunked()` for datasets with >500 samples to reduce memory footprint
+- See [Demo_script_optimized.ipynb](Demo_script_optimized.ipynb) for examples with memory management and functional programming patterns
+- For details on performance improvements and memory leak fixes, refer to the optimization branch
 
 ## License
 
