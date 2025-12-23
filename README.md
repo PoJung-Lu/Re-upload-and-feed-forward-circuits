@@ -2,7 +2,6 @@
 
 This repository contains the implementation code for the thesis "Quantum Classifiers Using Measurement Feed-forward Quantum Neural Network" [doi:10.6342/NTU202404165](https://drive.google.com/file/d/1yV0NOxuzr9Q0HYPzrn0tAS_NhO4z8QIa/view?usp=drive_link). For detailed information about the methodology and results, please refer to the thesis document.
 
-
 ## Purpose
 
 The main results presented in the thesis were originally obtained using the Jupyter Notebook script located in `Old_files/Original_script.ipynb`. This repository builds on that work, reorganizing and rewriting the original code into a modular and user-friendly framework. The goal is to provide a tool for researchers and developers to easily utilize the hybrid quantum neural network (QNN) framework, which combines feed-forward and re-upload structures.
@@ -32,13 +31,18 @@ This repository is not yet packaged as an official Python package. To use the fr
 This repository is developed under Python 3.13.11 and depends on the following key libraries:
 
 - PennyLane: 0.43.1 (https://github.com/PennyLaneAI/pennylane.git)
-- jax~=0.6.0 
+- jax~=0.6.0
 - jaxlib~=0.6.0
 
 To ensure compatibility and avoid dependency conflicts, it is recommended to use Anaconda to create a virtual environment:
 
-`conda create -n env python=3.13.11
-conda activate env install -r requirements.txt`
+To ensure environment consistency and prevent dependency conflicts, it is recommended to create an isolated virtual environment using Anaconda:
+
+```bash
+conda create -n env python=3.13.11
+conda activate env
+pip install -r requirements.txt
+```
 
 ## Getting Started
 
@@ -63,7 +67,8 @@ Parameter Details:
 
 1. Encoding number ($n_{enc}$):
    Specifies the number of rotation gates for encoding input data. The sequence follows $R_x(x_1)R_y(x_2)R_x(x_3)...$.
-   * Ensure $n\_{enc}*n_q \ge $ the number of features in the input data. \* For detailed encoding rules, refer to the thesis (p. 25).
+
+   - Ensure $n\_{enc}\*n_q \ge $ the number of features in the input data. \* For detailed encoding rules, refer to the thesis (p. 25).
 
 2. Qubit number ($n_q$):
    Determines the number of qubits allocated for the hybrid QNN circuit.
@@ -129,6 +134,7 @@ results = qc.jqc_nq(params, x_data.T, dm_labels[0])
 - **`MemoryTracker`**: Real-time memory monitoring to track peak usage during training
 
 **Important Notes**:
+
 - Standard `jqc_nq()` is memory-intensive for large datasets or circuits
 - Use `jqc_nq_chunked()` for datasets with >500 samples to reduce memory footprint
 - See [Demo_script_optimized.ipynb](Demo_script_optimized.ipynb) for examples with memory management and functional programming patterns
